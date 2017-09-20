@@ -1932,15 +1932,13 @@ func writeOneHeader(framer *http2.Framer, sid uint32, httpStatus int) error {
 	var buf bytes.Buffer
 	henc := hpack.NewEncoder(&buf)
 	henc.WriteField(hpack.HeaderField{Name: ":status", Value: fmt.Sprint(httpStatus)})
-	if err := framer.WriteHeaders(http2.HeadersFrameParam{
+	err := framer.WriteHeaders(http2.HeadersFrameParam{
 		StreamID:      sid,
 		BlockFragment: buf.Bytes(),
 		EndStream:     true,
 		EndHeaders:    true,
-	}); err != nil {
-		return err
-	}
-	return nil
+	})
+	return err
 }
 
 func writeTwoHeaders(framer *http2.Framer, sid uint32, httpStatus int) error {
